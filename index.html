@@ -1,64 +1,87 @@
 <!DOCTYPE html>
 <html>
-  <head >
-      <link rel ="stylesheet" href="word_twist.css">
-    <style>
-      .hidden {
-        display: none;
-      }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
-  </head>
-  <body>
-    <h1>Welcome to Kevin's Text Twist</h1>
-    <p> Use the given letters, and arrange them in any size to make words.Make as many words before time expires </p>
-        <button id="getrack">Generate a random rack of letters.</button>
-            <div id="letters">
-            </div>
-    <p>
+
+<head>
+  <link rel="stylesheet" href="word_twist.css">
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+</head>
+
+<body>
+  <h1>Welcome to Kevin's Text Twist</h1>
+  <p> Use the given letters, and arrange them in any size to make words.Make as many words before time expires </p>
+  <button id="getrack">Generate a random rack of letters.</button>
+  <div id="letters">
+  </div>
+  <p>
     <div>
-        <label for="Entry">Please Enter a word from the given letters!</label>
-            <input id="Entry" type="text">
+      <label for="Entry">Please Enter a word from the given letters!</label>
+      <input id="Entry" type="text">
     </div>
-    <input id = res onclick="checkWord()" type="submit" value="Check Entry">
-    </p>
-    <P id="correct">Words Found:</P>
-    <p id = "score" ></p>
-  </body>
-  <script>
+    <input id=res onclick="checkWord()" type="submit" value="Check Entry">
+  </p>
+  <P id="correct">Words Found:</P>
+  <p id="score"></p>
+</body>
+<script>
   var answer;
   var total = 0;
-    $(document).ready(function(){
-      let showRacks = function(racks){
-        $("#letters").html('');
-        racks.map(rack=>{
-          $("#letters").append(`<div>${rack.rack}: <class ="answer hidden"> ${rack.words}</span></div>`);
-          answer = rack.words;
-        });
-        
-         $("#letters").on("click", function(evt){
-          $(evt.currentTarget).find(".answer").toggleClass("hidden")
-          });
-      }
-     
-      
-      
-      $("#getrack").on("click", function(){
-        $.ajax({
-            method: "GET",
-            url: "api.php",
-            success: data=>{ showRacks(data)}
-        });
+  $(document).ready(function () {
+    let words = [];
+    let letterRack = [];
+    let wordlength = 0;
+    let line = "";
+
+    function newGame(rack) {
+      score = 0;
+      currentdisplay = [];
+      words = [];
+      $("#correct").html('');
+      //alert(rack["words"]);
+      words = rack["words"].split("@@");
+      document.querySelector("#letters").innerHTML = rack["rack"];
+    }
+
+
+
+    /*let showRacks = function (racks) {
+      $("#letters").html('');
+      racks.map(rack => {
+        $("#letters").append(`<div>${rack.rack}: <class ="answer hidden"> ${rack.words}</span></div>`);
+        answer = rack.words;
+      });
+
+      $("#letters").on("click", function (evt) {
+        $(evt.currentTarget).find(".answer").toggleClass("hidden")
+      });
+    }*/
+
+
+
+
+    $("#getrack").on("click", function () {
+      $.ajax({
+        method: "GET",
+        url: "api.php",
+        success: data => { showRacks(data) }
       });
     });
-    
-    function checkWord() {
-      var input = document.getElementById("Entry").value;
-      if(input === answer){
-          document.getElementById("correct").innerHTML += '<br>' + input;
-          document.getElementById("score").innerHTML = total++;
+  });
+
+  function checkWord() {
+    var input = document.getElementById("Entry").value;
+    for (var i = 0; i < words.length; i++) {
+      if (input === words[i]) {
+        document.getElementById("correct").innerHTML += '<br>' + input;
+        document.getElementById("score").innerHTML = total++;
       }
     }
-    
-  </script>
+  }
+
+</script>
+
 </html>
